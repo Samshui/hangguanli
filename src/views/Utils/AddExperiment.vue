@@ -27,6 +27,9 @@
       <el-form-item label="实验室" label-position="top">
         <el-input v-model="lab"></el-input>
       </el-form-item>
+      <el-form-item label="实验室容量" label-position="top">
+        <el-input v-model="site"></el-input>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="AddExperiment" class="submit-btn">添加实验</el-button>
         <el-button>取消</el-button>
@@ -47,6 +50,7 @@ export default {
       experimentTime: [],
       lab: '',
       eLabel: 0,
+      site: 30,
       options: [{
         value: 0,
         label: '电学实验'
@@ -98,7 +102,7 @@ export default {
       }
 
       // console.log(EM + " " + EN + " " + EE)
-      addExperiment(this.experimentID, this.eLabel, this.experimentName, this.lab, EM, EN, EE).then(
+      addExperiment(this.experimentID, this.eLabel, this.experimentName, this.lab, EM, EN, EE, this.site).then(
         res => {
           if (res.data.data === 1) {
             this.$notify.success({

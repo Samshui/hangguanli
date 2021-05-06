@@ -23,7 +23,8 @@
         </el-tab-pane>
         <el-tab-pane>
           <span slot="label">实验选择统计</span>
-          <div></div>
+          <div class="manage-page">
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
