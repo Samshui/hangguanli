@@ -53,13 +53,13 @@ export default {
       site: 30,
       options: [{
         value: 0,
-        label: '电学实验'
+        label: '数据库实验'
       }, {
         value: 1,
-        label: '力学实验'
+        label: '前端实验'
       }, {
         value: 2,
-        label: '光/热学实验'
+        label: '后端实验'
       }],
     }
   },
@@ -104,21 +104,28 @@ export default {
       // console.log(EM + " " + EN + " " + EE)
       addExperiment(this.experimentID, this.eLabel, this.experimentName, this.lab, EM, EN, EE, this.site).then(
         res => {
-          if (res.data.data === 1) {
+          console.log(res)
+
+          if (res.status === -1) {
+            this.$notify.error({
+              title: "error",
+              message: "请检查网络情况"
+            })
+            return
+          }
+
+          if (res.status === 1) {
+            this.$notify.warning({
+              title: "ID重复",
+              message: "实验ID已被使用",
+            });
+            return
+          }
+
+          if (res.status === 0) {
             this.$notify.success({
-              position: "top-right",
               title: "success",
               message: "实验新增成功",
-            });
-
-            // TODO 修改跳转路由
-            this.$router.push('/')
-          } else if (res.data.data === -1) {
-            console.log(res)
-            this.$notify.warning({
-              position: "top-right",
-              title: "信息重复",
-              message: "ID已被使用",
             });
           }
         }

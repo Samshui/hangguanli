@@ -5,21 +5,29 @@
         <div class="label-header">/ 实验内容 /</div>
         <div class="lab-detail-left">
           <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="filter"></el-input>
-          <el-tree
-            ref="tree"
-            :data="data"
-            :filter-node-method="filterNode"
-            :props="defaultProps"
-            @node-click="clickNode"
-            class="filter-tree"
-            default-expand-all>
+          <el-tree ref="tree"
+                   :data="experimentsEle"
+                   :filter-node-method="filterNode"
+                   :props="defaultProps"
+                   @node-click="clickNode"
+                   class="filter-tree"
+                   default-expand-all>
           </el-tree>
         </div>
       </div>
       <div class="right-bar">
         <div class="label-header">/ 参考报告 /</div>
         <div class="lab-detail-right">
-          <img src="../../assets/img/no-img.png" class="noStyle">
+          <img src="../../assets/img/empty.jpg" class="noStyle">
+
+          <div class="upload">
+            <el-upload
+              class="upload-demo" drag :action="url">
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+              <div class="el-upload__tip" slot="tip">只能上传word文件</div>
+            </el-upload>
+          </div>
         </div>
       </div>
     </div>
@@ -30,85 +38,34 @@
       :direction="direction"
       :before-close="handleClose" size="60%">
       <div class="labInstruction">
-        <img src="../../assets/img/no-img.png" v-if="!exist" class="noStyle">
+<!--        <img src="../../assets/img/empty.jpg" v-if="!exist" class="noStyle">-->
+        <ExperimentInfo :EID="chosenLabID"></ExperimentInfo>
       </div>
     </el-drawer>
   </div>
 </template>
 
 <script>
+import {getExperimentByLabel} from "@/network/experiment";
+import ExperimentInfo from "@/views/Utils/ExperimentInfo";
+
 export default {
   name: "EleLab",
+  components: {ExperimentInfo},
   data() {
     return {
       filterText: '',
-      data: [
-        {
-          label: '电阻的测量',
-          children: [
-            {
-              label: '1041',
-              children: [
-                {
-                  label: '1040114 伏安法测中电阻'
-                },
-                {
-                  label: '1040211 半偏法测检流计内阻与电流常数'
-                },
-                {
-                  label: '1040312 伏安法测高（低）电阻'
-                },
-                {
-                  label: '1040412 惠通斯电桥测中电阻'
-                }
-              ]
-            },
-            {
-              label: '1042',
-              children: [
-                {
-                  label: '1040514 双电桥测低电阻'
-                },
-                {
-                  label: '1040522 双电桥改单电桥测中电阻'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: '电位差计及其使用',
-          children: [
-            {
-              label: '1051',
-              children: [
-                {
-                  label: '1050113 自组电位差计测干电池电动势'
-                },
-                {
-                  label: '1050211 箱式电位差记测干电池电动势'
-                },
-                {
-                  label: '1050222 箱式电位差记测固定电阻'
-                },
-                {
-                  label: '1050232 箱式电位差记测电表内阻'
-                }
-              ]
-            }
-          ]
-        }
-      ],
       defaultProps: {
-        children: 'children',
-        label: 'label',
-        labelID: 'labelID'
+        label: 'ename',
+        labelID: 'eid'
       },
       drawer: false,
       direction: 'rtl',
       chosenLabID: '',
       chosenLabName: '',
       exist: false,
+      experimentsEle: null,
+      url: ''
     }
   },
   watch: {
@@ -119,14 +76,12 @@ export default {
   methods: {
     filterNode(value, data) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return data.Name.indexOf(value) !== -1;
     },
     clickNode(data, node, obj) {
-      if (node.isLeaf) {
-        this.drawer = true
-        this.chosenLabID = node.id
-        this.chosenLabName = node.label
-      }
+      this.chosenLabID = data.eid
+      this.chosenLabName = data.ename
+      this.drawer = true
     },
     handleClose(done) {
       // this.$confirm('确认关闭？')
@@ -135,6 +90,29 @@ export default {
       done();
     }
   },
+  created() {
+    getExperimentByLabel(0).then(
+      res => {
+        if (res.status === -1) {
+            this.$notify.error({
+              title: "error",
+              message: "未获取到相关实验，请检查网络情况"
+            })
+          return
+        }
+
+        if (res.status === 1) {
+            this.$notify.info({
+              title: "info",
+              message: "该栏目当前无相关实验"
+            })
+          return
+        }
+
+        this.experimentsEle = res.data
+      }
+    )
+  }
 }
 </script>
 
@@ -208,5 +186,10 @@ export default {
   width: 40%;
   display: flex;
   margin: 0 auto;
+}
+
+.upload {
+  display: flex;
+  justify-content: space-around;
 }
 </style>

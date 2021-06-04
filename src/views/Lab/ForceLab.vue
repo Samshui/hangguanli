@@ -7,7 +7,7 @@
           <el-input v-model="filterText" placeholder="输入关键字进行过滤" class="filter"></el-input>
           <el-tree
             ref="tree"
-            :data="data"
+            :data="experimentsForce"
             :filter-node-method="filterNode"
             :props="defaultProps"
             @node-click="clickNode"
@@ -19,7 +19,7 @@
       <div class="right-bar">
         <div class="label-header">/ 参考报告 /</div>
         <div class="lab-detail-right">
-          <img src="../../assets/img/no-img.png" class="noStyle">
+          <img src="../../assets/img/empty.jpg" class="noStyle">
         </div>
       </div>
     </div>
@@ -30,57 +30,34 @@
       :direction="direction"
       :before-close="handleClose" size="60%">
       <div class="labInstruction">
-        <img src="../../assets/img/no-img.png" v-if="!exist" class="noStyle">
+        <ExperimentInfo :EID="chosenLabID"></ExperimentInfo>
       </div>
     </el-drawer>
   </div>
 </template>
 
 <script>
+import {getExperimentByLabel} from "@/network/experiment";
+import ExperimentInfo from "@/views/Utils/ExperimentInfo";
+
 export default {
   name: "ForceLab",
+  components: {ExperimentInfo},
   data() {
     return {
       filterText: '',
-      data: [
-        {
-          label: '力学系列实验',
-          children: [
-            {
-              label: '1011',
-              children: [
-                {
-                  label: '1010113 拉伸法测钢丝弹性模量'
-                },
-                {
-                  label: '1010212 扭摆法测量转动惯量'
-                },
-              ]
-            },
-            {
-              label: '1012',
-              children: [
-                {
-                  label: '1010313 弯曲法测横梁弹性模量（霍尔传感器法）'
-                },
-                {
-                  label: '1010323 弯曲法测横粱弹性模量（弯曲仪法）'
-                },
-              ]
-            }
-          ]
-        },
-      ],
+
       defaultProps: {
-        children: 'children',
-        label: 'label',
-        labelID: 'labelID'
+        // children: 'children',
+        label: 'ename',
+        labelID: 'eid'
       },
       drawer: false,
       direction: 'rtl',
       chosenLabID: '',
       chosenLabName: '',
       exist: false,
+      experimentsForce: null
     }
   },
   watch: {
@@ -91,14 +68,12 @@ export default {
   methods: {
     filterNode(value, data) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return data.Name.indexOf(value) !== -1;
     },
     clickNode(data, node, obj) {
-      if (node.isLeaf) {
-        this.drawer = true
-        this.chosenLabID = node.id
-        this.chosenLabName = node.label
-      }
+      this.drawer = true
+      this.chosenLabID = node.eid
+      this.chosenLabName = node.ename
     },
     handleClose(done) {
       // this.$confirm('确认关闭？')
@@ -107,6 +82,29 @@ export default {
       done();
     }
   },
+  created() {
+    getExperimentByLabel(2).then(
+      res => {
+        if (res.status === -1) {
+          this.$notify({
+            type: "error",
+            message: "未获取到相关实验，请检查网络情况"
+          })
+          return
+        }
+
+        if (res.status === 1) {
+          this.$notify({
+            type: "info",
+            message: "该栏目当前无相关实验"
+          })
+          return
+        }
+
+        this.experimentsForce = res.data
+      }
+    )
+  }
 }
 </script>
 

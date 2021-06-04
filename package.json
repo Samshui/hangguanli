@@ -12,11 +12,12 @@
     "element-ui": "^2.15.1",
     "less": "^4.1.1",
     "less-loader": "^8.1.1",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-markdown": "^2.2.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-service": "^4.5.13",
     "axios": "^0.21.1",
     "babel-eslint": "^10.1.0",
     "vue-router": "^3.5.1",

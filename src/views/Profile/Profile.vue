@@ -8,10 +8,12 @@
         <div slot="header" >
           <span>个人信息</span>
         </div>
-        <div class="text item">学号：{{ this.user.studentID }}</div>
-        <div class="text item">姓名：{{ this.user.name }}</div>
+        <div class="text item">学号：{{ this.user.userID }}</div>
+        <div class="text item">姓名：{{ this.user.userName }}</div>
         <el-divider></el-divider>
-        <div class="text item">联系方式：{{ this.user.telephone }}</div>
+        <div class="text item">年龄：{{ this.user.age }}</div>
+        <div class="text item">联系方式：{{ this.user.phoneNumber }}</div>
+        <div class="text item">邮箱：{{ this.user.emailAddress }}</div>
       </el-card>
     </div>
   </div>
@@ -28,6 +30,7 @@ export default {
     }
   },
   created() {
+    console.log(this.$store.state.user)
     this.user = this.$store.state.user
   }
 }
@@ -40,7 +43,7 @@ export default {
   width: fit-content;
   height: fit-content;
   flex-direction: column;
-  padding-top: 100px;
+  padding-top: 50px;
 }
 
 .userImg {
@@ -64,7 +67,7 @@ export default {
 }
 
 .box-card {
-  margin-top: 30px;
+  margin-top: 10px;
   width: 480px;
   border: 1px solid #dbe8db;
 }

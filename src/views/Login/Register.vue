@@ -55,7 +55,7 @@
 
 <script>
 import Lis from "@/views/Utils/Lis";
-import {telephoneIsExisted, register} from "@/network/login";
+import {telephoneIsExisted, register, getInfo} from "@/network/login";
 
 export default {
   name: "Register",
@@ -117,44 +117,71 @@ export default {
         return;
       }
 
-      // 检查手机号是否被使用
-      telephoneIsExisted(this.telephone).then(
+      register(this.name, this.studentID, this.telephone, this.password).then(
         res => {
-          if (res.data.data === -4) {
-            this.$notify.info({
+          console.log(res)
+          if (res.status === 1) {
+            this.$notify.warning({
               title: "提示",
-              message: "手机号已被使用",
+              message: "当前学号已被使用",
             });
-          } else {
-            register(this.name, this.studentID, this.telephone, this.password).then(
-              res => {
-                console.log("register", res)
-                if (res.data.data === 1) {
-                  this.$notify.success({
-                    title: "成功",
-                    message: "注册成功",
-                  });
-
-                  let newUser = res.data.user
-                  this.$store.commit("login", newUser)
-                  this.$router.push("/main")
-                } else {
-                  this.$notify.success({
-                    title: "失败",
-                    message: "注册失败",
-                  });
-                }
-              }
-            ).catch(
-              err => {
-                console.log("register", err)
-              }
-            )
+            return
+          } else if (res.status === 2) {
+            this.$notify.warning({
+              title: "提示",
+              message: "当前联系方式已被使用",
+            });
+            return
           }
+
+          this.$notify.success({
+            title: "成功",
+            message: "注册成功",
+          });
+
+          this.$store.commit("login", res.data)
+          this.$router.push("/main")
         }
-      ).catch(err => {
-        console.log(err)
-      })
+      )
+
+      // 检查手机号是否被使用
+      // telephoneIsExisted(this.telephone).then(
+      //   res => {
+      //     if (res.data.data === -4) {
+      //       this.$notify.info({
+      //         title: "提示",
+      //         message: "手机号已被使用",
+      //       });
+      //     } else {
+      //       register(this.name, this.studentID, this.telephone, this.password).then(
+      //         res => {
+      //           console.log("register", res)
+      //           if (res.data.data === 1) {
+      //             this.$notify.success({
+      //               title: "成功",
+      //               message: "注册成功",
+      //             });
+      //
+      //             let newUser = res.data.user
+      //             this.$store.commit("login", newUser)
+      //             this.$router.push("/main")
+      //           } else {
+      //             this.$notify.success({
+      //               title: "失败",
+      //               message: "注册失败",
+      //             });
+      //           }
+      //         }
+      //       ).catch(
+      //         err => {
+      //           console.log("register", err)
+      //         }
+      //       )
+      //     }
+      //   }
+      // ).catch(err => {
+      //   console.log(err)
+      // })
     }
   }
 }

@@ -1,13 +1,14 @@
 import { request } from "@/network/request";
-let baseURL = "http://localhost:8010/api/user"
+// let baseURL = "http://localhost:8010/api/user"
+let baseURL = "http://localhost:8009"
 
 // 登录
 export function login(telephone, password) {
   return request(baseURL, {
     url: "/login",
     params: {
-      telephone,
-      password
+      PhoneNumber: telephone,
+      Password: password
     },
     method: "post"
   })
@@ -18,24 +19,35 @@ export function register(name, studentID, telephone, password) {
   return request(baseURL, {
     url: "/register",
     params: {
-      name,
-      studentID,
-      telephone,
-      password
+      UserName: name,
+      UserID: studentID,
+      PhoneNumber: telephone,
+      Password: password
     },
     method: "post"
   })
 }
 
 // 获取用户信息
-export function getInfo(token) {
+// export function getInfo(token) {
+//   return request(baseURL, {
+//     url: "/info",
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'Authorization': 'Bearer ' + token
+//     },
+//     method: "get"
+//   })
+// }
+
+// springboot 获取用户信息
+export function getInfo(UserID) {
   return request(baseURL, {
     url: "/info",
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
+    params: {
+      UserID: UserID
     },
-    method: "get"
+    method: "post"
   })
 }
 
@@ -44,7 +56,7 @@ export function telephoneIsExisted(telephone) {
   return request(baseURL, {
     url: "/telephoneIsExist",
     params: {
-      telephone
+      phoneNumber: telephone
     },
     method: "post"
   })

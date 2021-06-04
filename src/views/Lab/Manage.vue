@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="this.user.status !== 0" class="warn">
+    <div v-if="this.user.userStatue !== 1" class="warn">
       <div class="warning-zh">权限不足，请联系管理员</div>
       <div class="warning-en">/* Permission Denied! */</div>
       <div>
@@ -23,7 +23,8 @@
         </el-tab-pane>
         <el-tab-pane>
           <span slot="label">实验选择统计</span>
-          <div class="manage-page">
+          <div>
+            <Statics></Statics>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -34,9 +35,10 @@
 <script>
 import AddExperiment from "@/views/Utils/AddExperiment";
 import DeleteExperiment from "@/views/Utils/DeleteExperiment";
+import Statics from "@/views/Utils/Statics";
 export default {
   name: "Manage",
-  components: {DeleteExperiment, AddExperiment},
+  components: {Statics, DeleteExperiment, AddExperiment},
   data() {
     return {
       user: null
@@ -47,6 +49,7 @@ export default {
   },
   created() {
     this.user = this.$store.state.user
+    console.log(this.user)
   }
 }
 </script>

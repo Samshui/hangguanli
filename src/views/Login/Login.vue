@@ -62,52 +62,68 @@ export default {
       login(this.telephone, this.password).then(
         res => {
           console.log("login-res:", res)
-          if (res.data.data === -1) {
-            this.$notify.error({
-              title: "登录失败",
-              message: "用户账号不存在"
-            })
-          } else if (res.data.data === -2) {
-            this.$notify.error({
-              title: "登录失败",
-              message: "密码输入错误"
-            })
-          } else {
+
+          if (res.status === 0) {
             this.$notify.success({
               title: "登录成功",
               message: "登录成功"
             })
-            // 设置token
-            this.$store.commit("setToken", res.data.token)
-            // 获取用户信息
-            getInfo(this.$store.state.token).then(
-              resInfo => {
-                console.log("info", resInfo)
-                this.$store.commit("login", resInfo.data.user)
 
-                // 跳转
-                this.$router.push("/main")
-              }
-            ).catch(
-              err => {
-                this.$router.push("/")
-              }
-            )
-
-            console.log("欢迎进入航管理平台\n\n"   +
-              ",--.  ,--. ,----.   ,--.    \n" +
-              "|  '--'  |'  .-./   |  |    \n" +
-              "|  .--.  ||  | .---.|  |    \n" +
-              "|  |  |  |'  '--'  ||  '--. \n" +
-              "`--'  `--' `------' `-----' \n" +
-              "                            \n" +
-              "███████╗ █████╗ ███╗   ███╗███████╗██╗  ██╗██╗   ██╗██╗\n" +
-              "██╔════╝██╔══██╗████╗ ████║██╔════╝██║  ██║██║   ██║██║\n" +
-              "███████╗███████║██╔████╔██║███████╗███████║██║   ██║██║\n" +
-              "╚════██║██╔══██║██║╚██╔╝██║╚════██║██╔══██║██║   ██║██║\n" +
-              "███████║██║  ██║██║ ╚═╝ ██║███████║██║  ██║╚██████╔╝██║\n" +
-              "╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝")
+            this.$store.commit("login", res.data)
+            this.$router.push("/main")
+          } else {
+            this.$notify.error({
+              title: "登录失败",
+              message: "用户账号不存在或密码错误"
+            })
           }
+
+          // if (res.data.data === -1) {
+          //   this.$notify.error({
+          //     title: "登录失败",
+          //     message: "用户账号不存在"
+          //   })
+          // } else if (res.data.data === -2) {
+          //   this.$notify.error({
+          //     title: "登录失败",
+          //     message: "密码输入错误"
+          //   })
+          // } else {
+          //   this.$notify.success({
+          //     title: "登录成功",
+          //     message: "登录成功"
+          //   })
+          //   // 设置token
+          //   this.$store.commit("setToken", res.data.token)
+          //   // 获取用户信息
+          //   getInfo(this.$store.state.token).then(
+          //     resInfo => {
+          //       console.log("info", resInfo)
+          //       this.$store.commit("login", resInfo.data.user)
+          //
+          //       // 跳转
+          //       this.$router.push("/main")
+          //     }
+          //   ).catch(
+          //     err => {
+          //       this.$router.push("/")
+          //     }
+          //   )
+          //
+          //   console.log("欢迎进入航管理平台\n\n"   +
+          //     ",--.  ,--. ,----.   ,--.    \n" +
+          //     "|  '--'  |'  .-./   |  |    \n" +
+          //     "|  .--.  ||  | .---.|  |    \n" +
+          //     "|  |  |  |'  '--'  ||  '--. \n" +
+          //     "`--'  `--' `------' `-----' \n" +
+          //     "                            \n" +
+          //     "███████╗ █████╗ ███╗   ███╗███████╗██╗  ██╗██╗   ██╗██╗\n" +
+          //     "██╔════╝██╔══██╗████╗ ████║██╔════╝██║  ██║██║   ██║██║\n" +
+          //     "███████╗███████║██╔████╔██║███████╗███████║██║   ██║██║\n" +
+          //     "╚════██║██╔══██║██║╚██╔╝██║╚════██║██╔══██║██║   ██║██║\n" +
+          //     "███████║██║  ██║██║ ╚═╝ ██║███████║██║  ██║╚██████╔╝██║\n" +
+          //     "╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝")
+          // }
         }
       ).catch(
         err => {

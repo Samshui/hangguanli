@@ -26,7 +26,6 @@ export default {
     DeleteExperiment() {
       if (this.experimentID.length !== 7) {
         this.$notify.warning({
-          position: "top-right",
           title: "信息不完整",
           message: "请输入正确的7位实验ID",
         });
@@ -36,20 +35,54 @@ export default {
 
       deleteExperiment(this.experimentID).then(
         res => {
-          if (res.data.data === 1) {
+          console.log(res)
+
+          if (res.status === -1) {
+            this.$notify.error({
+              type: "error",
+              message: "请检查网络情况"
+            })
+            return
+          }
+
+          if (res.status === 1) {
+            this.$notify.warning({
+              title: "失败",
+              message: "删除失败"
+            })
+            return
+          }
+
+          if (res.status === 2) {
+            this.$notify.warning({
+              title: "不存在",
+              message: "不存在该实验"
+            })
+            return
+          }
+
+          if (res.status === 0) {
             this.$notify.success({
-              position: "top-right",
               title: "success",
               message: "实验删除成功",
             });
-            this.$router.push('/manage')
-          } else if (res.data.data === -1) {
-            this.$notify.warning({
-              position: "top-right",
-              title: "ID不存在",
-              message: "不存在该ID的实验",
-            });
           }
+
+
+          // if (res.data.data === 1) {
+          //   this.$notify.success({
+          //     position: "top-right",
+          //     title: "success",
+          //     message: "实验删除成功",
+          //   });
+          //   this.$router.push('/manage')
+          // } else if (res.data.data === -1) {
+          //   this.$notify.warning({
+          //     position: "top-right",
+          //     title: "ID不存在",
+          //     message: "不存在该ID的实验",
+          //   });
+          // }
         })
     }
   }
